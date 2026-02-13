@@ -3,299 +3,360 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FocusFlow Pro v2.0</title>
+    <title>FocusFlow Elite | v3.0</title>
     <style>
         :root {
-            --bg: #F8F9FD;
-            --primary: #4361EE;
-            --secondary: #FF4D6D;
-            --success: #2EC4B6;
-            --warning: #FF9F1C;
-            --dark: #0B090A;
-            --grey: #ADB5BD;
-            --card-shadow: 0 12px 24px rgba(0,0,0,0.04);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --bg: #F0F2F5;
+            --surface: #FFFFFF;
+            --primary: #3D5AFE;
+            --secondary: #FF6E40;
+            --success: #00C853;
+            --warning: #FFAB00;
+            --text-main: #1C1E21;
+            --text-muted: #606770;
+            --border: #E4E6EB;
+            --nav-dark: #1A1A2E;
+            --shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+            --radius-lg: 28px;
+            --radius-md: 18px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
-        body { background: var(--bg); color: var(--dark); display: flex; justify-content: center; overflow-x: hidden; }
+        [data-theme="dark"] {
+            --bg: #18191A;
+            --surface: #242526;
+            --text-main: #E4E6EB;
+            --text-muted: #B0B3B8;
+            --border: #3E4042;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; transition: background 0.3s, color 0.3s; }
+        body { background: var(--bg); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; }
 
         .app-shell {
-            width: 100%; max-width: 480px; min-height: 100vh;
-            background: var(--white); position: relative;
-            padding: 40px 24px 120px;
+            width: 100%; max-width: 500px; background: var(--bg); position: relative;
+            padding: 20px 20px 100px; overflow-x: hidden;
         }
 
-        /* Views */
-        .view { display: none; animation: fadeIn 0.4s ease; }
+        /* --- UI COMPONENTS --- */
+        .view { display: none; animation: slideUp 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
         .view.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Typography */
-        h1 { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
-        h2 { font-size: 20px; font-weight: 700; margin: 25px 0 15px; display: flex; justify-content: space-between; align-items: center; }
-        .subtitle { color: var(--grey); font-size: 14px; margin-bottom: 5px; font-weight: 500; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Search Bar */
-        .search-box {
-            background: #EDF2F4; border-radius: 16px; padding: 12px 20px;
-            display: flex; align-items: center; margin-bottom: 20px;
+        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }
+        .chip { background: var(--success); color: white; padding: 6px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; }
+
+        .search-bar {
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md);
+            padding: 12px 18px; display: flex; align-items: center; margin-bottom: 25px; box-shadow: var(--shadow);
         }
-        .search-box input {
-            background: transparent; border: none; outline: none;
-            width: 100%; font-size: 16px; margin-left: 10px;
-        }
+        .search-bar input { border: none; background: transparent; color: var(--text-main); width: 100%; margin-left: 10px; outline: none; }
 
-        /* Progress Cards */
-        .subject-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        /* Subject Cards */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .card {
-            background: white; border-radius: 28px; padding: 20px;
-            box-shadow: var(--card-shadow); position: relative;
-            transition: var(--transition); border: 1px solid rgba(0,0,0,0.02);
+            background: var(--surface); border-radius: var(--radius-lg); padding: 24px;
+            position: relative; box-shadow: var(--shadow); border: 1px solid var(--border);
+            cursor: pointer; overflow: hidden;
         }
-        .card:active { transform: scale(0.95); }
-        .card-icon { width: 45px; height: 45px; border-radius: 14px; display: flex; 
-                    align-items: center; justify-content: center; font-size: 22px; margin-bottom: 15px; }
+        .card::after { content: ''; position: absolute; bottom: 0; left: 0; height: 6px; width: 100%; background: var(--primary); }
+        .card-icon { font-size: 26px; margin-bottom: 15px; background: #3d5afe15; width: 50px; height: 50px; 
+                     display: flex; align-items: center; justify-content: center; border-radius: 14px; }
         
-        /* Progress Ring */
-        .progress-ring {
-            position: absolute; top: 20px; right: 20px;
-            width: 35px; height: 35px;
+        /* Pomodoro Timer */
+        .timer-container {
+            background: var(--nav-dark); color: white; border-radius: var(--radius-lg);
+            padding: 40px 20px; text-align: center; margin-top: 20px;
         }
+        #timerDisplay { font-size: 64px; font-weight: 800; font-variant-numeric: tabular-nums; margin: 10px 0; }
+        .timer-btns { display: flex; justify-content: center; gap: 15px; }
+        .t-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 10px 20px; border-radius: 12px; cursor: pointer; }
+        .t-btn.start { background: var(--success); }
 
-        /* Task List */
-        .task-list { margin-top: 10px; }
-        .task-item {
-            background: white; padding: 18px; border-radius: 20px;
-            margin-bottom: 12px; display: flex; align-items: center;
-            box-shadow: var(--card-shadow); border-left: 6px solid var(--primary);
-        }
-        .task-checkbox { 
-            width: 22px; height: 22px; border-radius: 6px; 
-            border: 2px solid var(--grey); margin-right: 15px; cursor: pointer;
-        }
-        .task-item.done { opacity: 0.6; }
-        .task-item.done .task-checkbox { background: var(--success); border-color: var(--success); }
+        /* Stats Section */
+        .stat-row { display: flex; gap: 15px; margin-top: 20px; }
+        .stat-box { background: var(--surface); flex: 1; padding: 20px; border-radius: var(--radius-md); text-align: center; box-shadow: var(--shadow); }
 
-        /* Bottom Menu */
+        /* Navigation */
         nav {
-            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 400px; background: #1a1a2e;
-            display: flex; justify-content: space-around; padding: 18px;
-            border-radius: 35px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); z-index: 1000;
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 440px; background: var(--nav-dark);
+            padding: 15px; border-radius: 30px; display: flex; justify-content: space-around;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 999;
         }
-        .nav-link { color: #5c5c7d; font-size: 22px; cursor: pointer; transition: 0.3s; }
-        .nav-link.active { color: white; transform: translateY(-5px); }
+        .nav-item { color: #5c5c7d; font-size: 22px; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: white; transform: translateY(-5px); }
 
-        /* Form Styling */
-        .modal-body { padding: 10px 0; }
+        /* Forms */
+        .btn-full { width: 100%; padding: 18px; border-radius: 16px; border: none; font-weight: 700; cursor: pointer; margin-top: 15px; }
+        .btn-primary { background: var(--primary); color: white; }
         .input-group { margin-bottom: 20px; }
-        label { display: block; font-size: 13px; font-weight: 700; color: var(--grey); margin-bottom: 8px; text-transform: uppercase; }
-        input, select { 
-            width: 100%; padding: 16px; border-radius: 16px; 
-            border: 2px solid #F1F3F5; font-size: 16px; transition: 0.2s;
-        }
-        input:focus { border-color: var(--primary); outline: none; }
-        .btn {
-            width: 100%; padding: 18px; border-radius: 18px; border: none;
-            background: var(--primary); color: white; font-size: 16px; font-weight: 700;
-            cursor: pointer; box-shadow: 0 10px 20px rgba(67, 97, 238, 0.2);
-        }
-
-        /* Custom FAB */
-        .fab {
-            background: var(--secondary); color: white; border: none;
-            width: 55px; height: 55px; border-radius: 20px;
-            font-size: 24px; cursor: pointer; display: flex; 
-            align-items: center; justify-content: center;
-        }
+        .input-group label { display: block; font-size: 12px; font-weight: 800; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; }
+        input, select { width: 100%; padding: 16px; border-radius: 14px; border: 2px solid var(--border); background: var(--surface); color: var(--text-main); }
     </style>
 </head>
-<body>
+<body data-theme="light">
 
 <div class="app-shell">
     
     <div id="dashView" class="view active">
-        <p class="subtitle" id="currentDate"></p>
-        <h1 id="userNameHeading">FocusFlow</h1>
-        
-        <div class="search-box">
+        <header>
+            <div>
+                <p id="headerDate" style="color: var(--text-muted); font-size: 14px;"></p>
+                <h1 id="userName">Hey Student!</h1>
+            </div>
+            <div class="chip" id="totalTasks">0 Subjects</div>
+        </header>
+
+        <div class="search-bar">
             <span>🔍</span>
-            <input type="text" placeholder="Search subjects..." id="subjectSearch" oninput="filterSubjects()">
+            <input type="text" placeholder="Search your subjects..." id="searchInp" oninput="ui.renderSubjects()">
         </div>
 
-        <h2>Curriculum <button class="fab" onclick="navigate('addView')" style="width:40px; height:40px; font-size:18px;">+</button></h2>
-        <div class="subject-grid" id="subjectGrid"></div>
+        <div class="grid" id="subjectGrid"></div>
+        
+        <div class="stat-row">
+            <div class="stat-box">
+                <p style="font-size: 12px; color: var(--text-muted);">Study Time</p>
+                <h3 id="statTime">0m</h3>
+            </div>
+            <div class="stat-box">
+                <p style="font-size: 12px; color: var(--text-muted);">Completed</p>
+                <h3 id="statDone">0%</h3>
+            </div>
+        </div>
+    </div>
 
-        <h2>Today's Tasks</h2>
-        <div class="task-list" id="taskList"></div>
-        <button class="btn" onclick="addNewTask()" style="background: transparent; color: var(--primary); box-shadow: none; border: 2px dashed #ddd;">+ Add New Task</button>
+    <div id="timerView" class="view">
+        <h2 style="margin-bottom: 20px;">Deep Focus</h2>
+        <div class="timer-container">
+            <p id="timerLabel">STUDY SESSION</p>
+            <div id="timerDisplay">25:00</div>
+            <div class="timer-btns">
+                <button class="t-btn start" id="timerStart" onclick="timer.toggle()">Start</button>
+                <button class="t-btn" onclick="timer.reset()">Reset</button>
+            </div>
+        </div>
+        <div style="margin-top: 30px;">
+            <h3>Focus Music</h3>
+            <div class="card" style="margin-top:10px; display:flex; align-items:center; gap:15px; padding:15px;">
+                <span>🎵</span>
+                <div>
+                    <strong>Lo-fi Study Beats</strong>
+                    <p style="font-size:12px; color:var(--text-muted);">Recommended for focus</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="addView" class="view">
-        <h2>Add Subject</h2>
-        <div class="modal-body">
+        <h2>New Subject</h2>
+        <div style="margin-top: 25px;">
             <div class="input-group">
-                <label>Subject Name</label>
-                <input type="text" id="newSubName" placeholder="e.g. Astrophysics">
+                <label>Subject Title</label>
+                <input type="text" id="subTitle" placeholder="Physics, Art, Math...">
             </div>
             <div class="input-group">
-                <label>Theme Color</label>
-                <select id="newSubColor">
+                <label>Total Modules</label>
+                <input type="number" id="subModules" placeholder="How many chapters?">
+            </div>
+            <div class="input-group">
+                <label>Theme</label>
+                <select id="subColor">
                     <option value="var(--primary)">Cobalt Blue</option>
-                    <option value="var(--secondary)">Sunset Red</option>
-                    <option value="var(--success)">Mint Green</option>
-                    <option value="var(--warning)">Amber Gold</option>
+                    <option value="var(--secondary)">Sunset Orange</option>
+                    <option value="var(--success)">Emerald Green</option>
+                    <option value="var(--warning)">Bright Amber</option>
                 </select>
             </div>
-            <div class="input-group">
-                <label>Icon</label>
-                <input type="text" id="newSubIcon" placeholder="Paste emoji here">
-            </div>
-            <button class="btn" onclick="saveSubject()">Create Subject</button>
-            <p onclick="navigate('dashView')" style="text-align:center; margin-top:20px; color:var(--grey); cursor:pointer;">Go Back</p>
+            <button class="btn-full btn-primary" onclick="actions.addSubject()">Create Area</button>
+            <button class="btn-full" onclick="ui.navigate('dashView')" style="background:transparent; color:var(--text-muted);">Cancel</button>
         </div>
     </div>
 
     <div id="settingsView" class="view">
         <h2>Settings</h2>
-        <div class="input-group">
-            <label>Change User Name</label>
-            <input type="text" id="userNameInput" placeholder="Enter name..." onchange="updateProfile()">
-        </div>
-        <div style="margin-top: 50px;">
-            <p style="color:red; font-weight:700;">DANGER ZONE</p>
-            <button class="btn" style="background:#ff4d4d; margin-top:10px;" onclick="resetApp()">Reset All Data</button>
+        <div style="margin-top: 25px;">
+            <div class="input-group">
+                <label>User Name</label>
+                <input type="text" id="userNameInp" placeholder="Your Name" onchange="actions.saveName()">
+            </div>
+            <div class="input-group">
+                <label>Appearance</label>
+                <button class="btn-full" onclick="actions.toggleTheme()" style="background:var(--border);">Toggle Dark/Light Mode</button>
+            </div>
+            <div style="margin-top: 100px; border-top: 1px solid var(--border); padding-top: 20px;">
+                <p style="color:red; font-size:12px; font-weight:800; margin-bottom:10px;">DANGER ZONE</p>
+                <button class="btn-full" style="background:#ff3b30; color:white;" onclick="actions.reset()">Wipe All Storage</button>
+            </div>
         </div>
     </div>
 
     <nav>
-        <div class="nav-link active" onclick="navigate('dashView', this)">🏠</div>
-        <div class="nav-link" onclick="navigate('settingsView', this)">⚙️</div>
+        <div class="nav-item active" onclick="ui.navigate('dashView', this)">🏠</div>
+        <div class="nav-item" onclick="ui.navigate('timerView', this)">⏱️</div>
+        <div class="nav-item" onclick="ui.navigate('addView', this)">➕</div>
+        <div class="nav-item" onclick="ui.navigate('settingsView', this)">⚙️</div>
     </nav>
 </div>
 
 <script>
-    // APP STATE & STORAGE
-    let state = {
-        user: localStorage.getItem('ff_user') || 'Scholar',
-        subjects: JSON.parse(localStorage.getItem('ff_subs')) || [],
-        tasks: JSON.parse(localStorage.getItem('ff_tasks')) || []
+    // --- APP CORE STATE ---
+    const app = {
+        data: JSON.parse(localStorage.getItem('ff_pro_data')) || {
+            name: 'Scholar',
+            subjects: [],
+            totalMinutesStudy: 0,
+            theme: 'light'
+        }
     };
 
-    // UI CONTROLLER
-    function navigate(viewId, el) {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active');
-        if(el) {
-            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-            el.classList.add('active');
+    // --- UI ENGINE ---
+    const ui = {
+        navigate(id, el) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if(el) {
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                el.classList.add('active');
+            }
+        },
+
+        renderSubjects() {
+            const grid = document.getElementById('subjectGrid');
+            const term = document.getElementById('searchInp').value.toLowerCase();
+            const filtered = app.data.subjects.filter(s => s.title.toLowerCase().includes(term));
+            
+            grid.innerHTML = filtered.length ? '' : '<p style="grid-column:span 2; text-align:center; padding:40px; color:#999;">No subjects yet.</p>';
+            
+            filtered.forEach(s => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.style.setProperty('--primary', s.color);
+                card.onclick = () => actions.increment(s.id);
+                card.innerHTML = `
+                    <div class="card-icon" style="color:${s.color}">📚</div>
+                    <strong>${s.title}</strong>
+                    <p style="font-size:12px; color:var(--text-muted); margin-top:5px;">
+                        ${s.completed}/${s.total} Modules Done
+                    </p>
+                `;
+                grid.appendChild(card);
+            });
+
+            document.getElementById('totalTasks').innerText = `${app.data.subjects.length} Subjects`;
+            document.getElementById('statTime').innerText = `${app.data.totalMinutesStudy}m`;
+            document.getElementById('userName').innerText = `Hi, ${app.data.name}`;
+            document.getElementById('statDone').innerText = this.calcTotalProgress() + '%';
+        },
+
+        calcTotalProgress() {
+            if(!app.data.subjects.length) return 0;
+            let total = 0, done = 0;
+            app.data.subjects.forEach(s => { total += parseInt(s.total); done += s.completed; });
+            return Math.round((done/total) * 100) || 0;
         }
-    }
+    };
 
-    // SUBJECT LOGIC
-    function saveSubject() {
-        const name = document.getElementById('newSubName').value;
-        const color = document.getElementById('newSubColor').value;
-        const icon = document.getElementById('newSubIcon').value || '📚';
+    // --- ACTION HANDLERS ---
+    const actions = {
+        addSubject() {
+            const title = document.getElementById('subTitle').value;
+            const total = document.getElementById('subModules').value;
+            const color = document.getElementById('subColor').value;
+            
+            if(!title || !total) return alert("Fill all fields");
+            
+            app.data.subjects.push({
+                id: Date.now(),
+                title, total, color, completed: 0
+            });
+            this.save();
+            ui.renderSubjects();
+            ui.navigate('dashView');
+        },
 
-        if(!name) return alert("Enter a name!");
+        increment(id) {
+            const s = app.data.subjects.find(x => x.id === id);
+            if(s.completed < s.total) s.completed++;
+            this.save();
+            ui.renderSubjects();
+        },
 
-        state.subjects.push({ id: Date.now(), name, color, icon, progress: 0 });
-        sync();
-        render();
-        navigate('dashView');
-    }
+        saveName() {
+            app.data.name = document.getElementById('userNameInp').value;
+            this.save();
+            ui.renderSubjects();
+        },
 
-    function filterSubjects() {
-        const term = document.getElementById('subjectSearch').value.toLowerCase();
-        render(term);
-    }
+        toggleTheme() {
+            app.data.theme = app.data.theme === 'light' ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', app.data.theme);
+            this.save();
+        },
 
-    // TASK LOGIC
-    function addNewTask() {
-        const t = prompt("What do you need to do today?");
-        if(t) {
-            state.tasks.push({ id: Date.now(), text: t, done: false });
-            sync();
-            render();
+        reset() {
+            if(confirm("Wipe everything?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        },
+
+        save() {
+            localStorage.setItem('ff_pro_data', JSON.stringify(app.data));
         }
-    }
+    };
 
-    function toggleTask(id) {
-        const task = state.tasks.find(t => t.id === id);
-        task.done = !task.done;
-        sync();
-        render();
-    }
+    // --- TIMER ENGINE ---
+    const timer = {
+        timeLeft: 1500,
+        running: false,
+        interval: null,
 
-    // RENDER ENGINE
-    function render(filter = "") {
-        const grid = document.getElementById('subjectGrid');
-        const taskList = document.getElementById('taskList');
-        document.getElementById('userNameHeading').innerText = "Hi, " + state.user;
-        document.getElementById('userNameInput').value = state.user;
+        toggle() {
+            if(this.running) {
+                clearInterval(this.interval);
+                document.getElementById('timerStart').innerText = "Start";
+            } else {
+                this.interval = setInterval(() => this.tick(), 1000);
+                document.getElementById('timerStart').innerText = "Pause";
+            }
+            this.running = !this.running;
+        },
 
-        // Render Subjects
-        grid.innerHTML = "";
-        const filtered = state.subjects.filter(s => s.name.toLowerCase().includes(filter));
-        
-        if(filtered.length === 0) grid.innerHTML = "<p style='grid-column:span 2; color:#999;'>No subjects found.</p>";
-        
-        filtered.forEach(s => {
-            grid.innerHTML += `
-                <div class="card" onclick="updateProgress(${s.id})">
-                    <div class="card-icon" style="background:${s.color}20; color:${s.color}">${s.icon}</div>
-                    <strong>${s.name}</strong>
-                    <div class="subtitle">${s.progress}% Done</div>
-                </div>
-            `;
-        });
+        tick() {
+            if(this.timeLeft <= 0) {
+                clearInterval(this.interval);
+                alert("Session Complete!");
+                app.data.totalMinutesStudy += 25;
+                actions.save();
+                this.reset();
+                return;
+            }
+            this.timeLeft--;
+            this.updateDisplay();
+        },
 
-        // Render Tasks
-        taskList.innerHTML = "";
-        state.tasks.forEach(t => {
-            taskList.innerHTML += `
-                <div class="task-item ${t.done ? 'done' : ''}" onclick="toggleTask(${t.id})">
-                    <div class="task-checkbox"></div>
-                    <span>${t.text}</span>
-                </div>
-            `;
-        });
-    }
+        updateDisplay() {
+            const m = Math.floor(this.timeLeft / 60);
+            const s = this.timeLeft % 60;
+            document.getElementById('timerDisplay').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+        },
 
-    function updateProgress(id) {
-        const s = state.subjects.find(x => x.id === id);
-        let p = prompt("Update progress (0-100):", s.progress);
-        if(p !== null) {
-            s.progress = Math.min(100, Math.max(0, parseInt(p)));
-            sync();
-            render();
+        reset() {
+            clearInterval(this.interval);
+            this.running = false;
+            this.timeLeft = 1500;
+            this.updateDisplay();
+            document.getElementById('timerStart').innerText = "Start";
         }
-    }
+    };
 
-    function updateProfile() {
-        state.user = document.getElementById('userNameInput').value;
-        sync();
-        render();
-    }
-
-    function sync() {
-        localStorage.setItem('ff_user', state.user);
-        localStorage.setItem('ff_subs', JSON.stringify(state.subjects));
-        localStorage.setItem('ff_tasks', JSON.stringify(state.tasks));
-    }
-
-    function resetApp() {
-        if(confirm("Wipe all data?")) {
-            localStorage.clear();
-            location.reload();
-        }
-    }
-
+    // --- INIT ---
     window.onload = () => {
-        document.getElementById('currentDate').innerText = new Date().toDateString();
-        render();
+        document.getElementById('headerDate').innerText = new Date().toDateString();
+        document.body.setAttribute('data-theme', app.data.theme);
+        ui.renderSubjects();
     };
 </script>
 </body>
