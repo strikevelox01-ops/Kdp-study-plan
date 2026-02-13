@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FocusFlow | Study Planner</title>
+    <style>
+        :root {
+            /* Updated Professional Color Palette */
+            --bg-canvas: #f0f3f7;
+            --primary-cobalt: #3d5afe;
+            --accent-sunset: #ff6e40;
+            --mint-success: #00c853;
+            --royal-purple: #7c4dff;
+            --text-main: #1a1a2e;
+            --text-muted: #62727b;
+            --white: #ffffff;
+            --card-radius: 24px;
+            --inner-shadow: inset 2px 2px 5px rgba(255,255,255,0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0; padding: 0;
+            font-family: 'Inter', -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-canvas);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+        }
+
+        /* App Main Shell */
+        .app-shell {
+            width: 100%;
+            max-width: 450px;
+            min-height: 100vh;
+            background: var(--white);
+            position: relative;
+            padding: 30px 20px 100px 20px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.05);
+        }
+
+        /* Top Header - Removed Profile Photo */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .welcome-text h1 {
+            font-size: 26px;
+            letter-spacing: -0.5px;
+        }
+
+        .welcome-text p {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-top: 4px;
+        }
+
+        .task-badge {
+            background: var(--mint-success);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        /* Category Grid */
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 25px 0 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .course-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .course-card {
+            padding: 24px;
+            border-radius: var(--card-radius);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .course-card:active { transform: scale(0.96); }
+
+        .card-math { background: linear-gradient(135deg, #3d5afe, #8c9eff); }
+        .card-chem { background: linear-gradient(135deg, #ff6e40, #ffab91); }
+
+        /* Schedule Component */
+        .schedule-card {
+            background: var(--primary-cobalt);
+            color: white;
+            padding: 25px;
+            border-radius: var(--card-radius);
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Abstract Shape Detail for Visual Interest (Meticulous attention) */
+        .schedule-card::after {
+            content: '';
+            position: absolute;
+            top: -20px; right: -20px;
+            width: 100px; height: 100px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+
+        .schedule-card h3 { font-size: 20px; margin-bottom: 8px; }
+        .schedule-card p { opacity: 0.8; font-size: 14px; margin-bottom: 20px; }
+
+        .meta-info {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* List items for secondary tasks */
+        .task-item {
+            display: flex;
+            align-items: center;
+            background: #f8f9fe;
+            padding: 18px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            border-left: 5px solid var(--royal-purple);
+        }
+
+        .task-icon {
+            width: 40px; height: 40px;
+            background: #edeefd;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            font-size: 18px;
+        }
+
+        /* Bottom Tab Bar */
+        .tab-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 410px;
+            background: #1a1a2e;
+            display: flex;
+            justify-content: space-around;
+            padding: 16px 0;
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            z-index: 100;
+        }
+
+        .tab-item {
+            color: #5c5c7d;
+            font-size: 22px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .tab-item.active {
+            color: var(--mint-success);
+        }
+
+        /* Action Button */
+        .add-btn {
+            background: var(--accent-sunset);
+            width: 54px; height: 54px;
+            border-radius: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 28px;
+            box-shadow: 0 8px 20px rgba(255, 110, 64, 0.4);
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header>
+        <div class="welcome-text">
+            <p>Friday, 13 Feb</p>
+            <h1>My Dashboard</h1>
+        </div>
+        <div class="task-badge">4 Active</div>
+    </header>
+
+    <div class="section-title">
+        <span>Curriculum</span>
+        <div class="add-btn" onclick="addNew()">+</div>
+    </div>
+
+    <div class="course-grid">
+        <div class="course-card card-math">
+            <span style="font-size: 24px;">📐</span>
+            <strong>Mathematics</strong>
+            <small>12 Chapters</small>
+        </div>
+        <div class="course-card card-chem">
+            <span style="font-size: 24px;">🧪</span>
+            <strong>Chemistry</strong>
+            <small>8 Chapters</small>
+        </div>
+    </div>
+
+    <div class="section-title">Priority Schedule</div>
+
+    <div class="schedule-card">
+        <h3>Advanced Physics</h3>
+        <p>Quantum Mechanics Intro</p>
+        <div class="meta-info">
+            <span>🕒 14:30 - 15:30</span>
+            <span>📍 Lab 402</span>
+        </div>
+    </div>
+
+    <div class="section-title">Other Tasks</div>
+
+    <div class="task-item">
+        <div class="task-icon">📖</div>
+        <div>
+            <div style="font-weight: 600;">Literature Review</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Due Tomorrow</div>
+        </div>
+    </div>
+
+    <div class="task-item" style="border-left-color: var(--mint-success);">
+        <div class="task-icon">💻</div>
+        <div>
+            <div style="font-weight: 600;">Coding Lab</div>
+            <div style="font-size: 12px; color: var(--text-muted);">In 2 hours</div>
+        </div>
+    </div>
+
+    <nav class="tab-bar">
+        <div class="tab-item active" onclick="switchTab(this)">◈</div>
+        <div class="tab-item" onclick="switchTab(this)">☷</div>
+        <div class="tab-item" onclick="switchTab(this)">◔</div>
+        <div class="tab-item" onclick="switchTab(this)">⚙</div>
+    </nav>
+</div>
+
+<script>
+    function switchTab(el) {
+        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    function addNew() {
+        const name = prompt("Enter Subject or Task Name:");
+        if (name) {
+            alert("New course '" + name + "' added to your curriculum!");
+        }
+    }
+
+    // Meticulous touch: Haptic feedback simulation
+    document.querySelectorAll('.course-card, .tab-item, .add-btn').forEach(item => {
+        item.addEventListener('click', () => {
+            if (window.navigator.vibrate) window.navigator.vibrate(10);
+        });
+    });
+</script>
+
+</body>
+</html>
